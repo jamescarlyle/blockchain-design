@@ -2,7 +2,46 @@
 Diagrams may be edited using an online PlantUML editor, such as [https://plantuml.com/](https://plantuml.com/).
 
 # Basic Interaction
-
+     ┌───────────┐          ┌──────┐          ┌───────────────┐          ┌───────────┐                ┌────────┐  
+     │Application│          │Wallet│          │WalletExtension│          │ObscuroNode│                │Ethereum│  
+     └─────┬─────┘          └──┬───┘          └───────┬───────┘          └─────┬─────┘                └───┬────┘  
+           │                   │                      │                  ╔═════╧══════════════════════════╧══════╗
+           │                   │                      │                  ║supports Ethereum JSON-RPC            ░║
+           │                   │                      │                  ╚═════╤══════════════════════════╤══════╝
+           │ raw transaction   │                      │                        │                          │       
+           │──────────────────>│                      │                        │                          │       
+           │                   │                      │                        │                          │       
+           │                   │────┐                 │                        │                          │       
+           │                   │    │ sign            │                        │                          │       
+           │                   │<───┘                 │                        │                          │       
+           │                   │                      │                        │                          │       
+           │                   │       encrypt        │                        │                          │       
+           │                   │ ────────────────────>│                        │                          │       
+           │                   │                      │                        │                          │       
+           │                   │                      │       dispatch         │                          │       
+           │                   │                      │───────────────────────>│                          │       
+           │                   │                      │                        │                          │       
+           │                   │                      │                        │   fetch code and state   │       
+           │                   │                      │                        │──────────────────────────>       
+           │                   │                      │                        │                          │       
+           │                   │                      │                        ────┐                              
+           │                   │                      │                            │ process state, encrypt       
+           │                   │                      │                        <───┘                              
+           │                   │                      │                        │                          │       
+           │                   │                      │                        │     submit new state     │       
+           │                   │                      │                        │──────────────────────────>       
+           │                   │                      │                        │                          │       
+           │                   │                      │                        │         receipt          │       
+           │                   │                      │                        │<──────────────────────────       
+           │                   │                      │                        │                          │       
+           │                   │                      │   encrypted receipt    │                          │       
+           │                   │                      │<───────────────────────│                          │       
+           │                   │                      │                        │                          │       
+           │                   │       receipt        │                        │                          │       
+           │                   │ <────────────────────│                        │                          │       
+     ┌─────┴─────┐          ┌──┴───┐          ┌───────┴───────┐          ┌─────┴─────┐                ┌───┴────┐  
+     │Application│          │Wallet│          │WalletExtension│          │ObscuroNode│                │Ethereum│  
+     └───────────┘          └──────┘          └───────────────┘          └───────────┘                └────────┘  
 ```
 @startuml
 !pragma teoz true
@@ -46,9 +85,90 @@ WE -> W: receipt
 ```
 
 # More Complex Example Of Guessing Game
-
-![Image of interaction](https://www.plantuml.com/plantuml/png/bPBDRjim48JlV8fjUac19cY2zcB0HHoN4504KP0Oq2KNLbhRX2Kkkrmb_K7UlQOjsMAh77eKlvaTpb9NGGnBszJgZMUpQWm8qYyGRb65ZNNUi6cW8KVbcgb1M9ew315JwwgIs273nQS126jJqRDrgtyi0R-tw4hyhG1cpFGyfveOtkhvnPVBZzl3EyDYI-kDasjJRbQxZBseM5l1loJ45NAARqamjQPiwBckjy9ubLA8NmUlJBknIxonRcJYow2o8zdL7Hi_Flb5AN_i23FlQriQiUJ019Wbi31rZQ9_2BhG2Of4a7yBPSjqInL6c2VmHCiQ6TlcqKN1ILJeHA7lvvSVul4YDMOjXc3Twj5bfjaRCwLYLw0dPCZVWvv0QBqdbW1z3dnzo6_Fxk_cIasd2zgWY_MOdamzdQePd7s6Oh8FFJSxWATPzauLaUGJG5VoJozOFReXpYFM8yRzZMfSIWV1XlWYnq5AH-zY0aENxk8OIxHUzlEBGVo1597CZihOgz_De55_59TrleeVfoEbe2TzdzI6edlbWnZ1qq6zL1jR7Xl6Fyp3GckLTuaLHjRroYQ7tApRXR1nOOcS9lIdO9qWbxWRdXrM5JovW2fFMobqrNYVCD8dVSZ1DVxZ1QwsYMrJ_m40)
-
+                                                                                          ┌────────┐                           ┌────────┐                    
+     ┌───────────┐          ┌───────────────┐          ┌───────────┐                      │Ethereum│          ┌─────┐          │Guessing│                    
+     │Application│          │WalletExtension│          │ObscuroNode│                      │Node    │          │ERC20│          │Game    │                    
+     └─────┬─────┘          └───────┬───────┘          └─────┬─────┘                      └───┬────┘          └──┬──┘          └───┬────┘                    
+           │                        │                  ╔═════╧════════════════════════════════╧══════╗           │                 │                         
+           │                        │                  ║supports Ethereum JSON-RPC                  ░║           │                 │                         
+           │                        │                  ╚═════╤════════════════════════════════╤══════╝           │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │                        │        ╔═══════════════╗       │                  │                 │                         
+═══════════╪════════════════════════╪════════════════════════╪════════╣ Token Approval╠═══════╪══════════════════╪═════════════════╪═════════════════════════
+           │                        │                        │        ╚═══════════════╝       │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │   ERC20.approve(GG)    │                        │                                │                  │                 │                         
+           │───────────────────────>│                        │                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │      encrypted         │                                │                  │                 │                         
+           │                        │      approve(GG)       │                                │                  │                 │                         
+           │                        │───────────────────────>│                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                      ╔═╧══════════════════════╗ │       ERC20.approve(GG)        │                  │                 │                         
+           │                      ║ERC20 is not encrypted ░║ │────────────────────────────────>                  │                 │                         
+           │                      ╚═╤══════════════════════╝ │                                │                  │                 │                         
+           │                        │                        │                                │   approve(GG)    │                 │                         
+           │                        │                        │                                │ ────────────────>│                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │                        │            receipt             │                  │                 │                         
+           │                        │                        │<────────────────────────────────                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │   encrypted receipt    │                                │                  │                 │                         
+           │                        │<───────────────────────│                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │        receipt         │                        │                                │                  │                 │                         
+           │<───────────────────────│                        │                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │                        │           ╔═════════╗          │                  │                 │                         
+═══════════╪════════════════════════╪════════════════════════╪═══════════╣ Guessing╠══════════╪══════════════════╪═════════════════╪═════════════════════════
+           │                        │                        │           ╚═════════╝          │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │ GuessingGame.guess()   │                        │                                │                  │                 │                         
+           │───────────────────────>│                        │                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │   encrypted guess()    │                                │                  │                 │                         
+           │                        │───────────────────────>│                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                   ╔════╧══════════════════════╗ │GuessingGame.getEncryptedState()│                  │                 │                         
+           │                   ║GuessingGame is encrypted ░║ │────────────────────────────────>                  │                 │                         
+           │                   ╚════╤══════════════════════╝ │                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │        ╔══════╤════════╪════════════════════════════════╪══════════════════╪═════════════════╪══════════════╗          
+           │                        │        ║ TEE  │        │                                │                  │                 │              ║          
+           │                        │        ╟──────┘        ────┐                            │                  │                 │              ║          
+           │                        │        ║                   │ decrypt                    │                  │                 │              ║          
+           │                        │        ║               <───┘                            │                  │                 │              ║          
+           │                        │        ║               │                                │                  │                 │              ║          
+           │                        │        ║               │                               guess()             │                 │              ║          
+           │                        │        ║               │─────────────────────────────────────────────────────────────────────>              ║          
+           │                        │        ║               │                                │                  │                 │              ║          
+           │                        │        ║               │                           ╔════╧═════════════════╗│    transfer()   │              ║          
+           │                        │        ║               │                           ║transfer intercepted ░║│ <────────────────              ║          
+           │                        │        ║               │                           ╚════╤═════════════════╝│                 │              ║          
+           │                        │        ║               │                              response             │                 │              ║          
+           │                        │        ║               │<─────────────────────────────────────────────────────────────────────              ║          
+           │                        │        ║               │                                │                  │                 │              ║          
+           │                        │        ║               ────┐                            │                  │                 │              ║          
+           │                        │        ║                   │ encrypt                    │                  │                 │              ║          
+           │                        │        ║               <───┘                            │                  │                 │              ║          
+           │                        │        ╚═══════════════╪════════════════════════════════╪══════════════════╪═════════════════╪══════════════╝          
+           │                        │                        │                                │                  │                 │                         
+           │                        │                        │GuessingGame.setEncryptedState()│                  │                 │                         
+           │                        │                        │────────────────────────────────>                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │                        │        ERC20.transfer()        │                  │                 │                         
+           │                        │                        │────────────────────────────────>                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │                        │   encrypted receipt    │                                │                  │                 │                         
+           │                        │<───────────────────────│                                │                  │                 │                         
+           │                        │                        │                                │                  │                 │                         
+           │        receipt         │                        │                                │                  │                 │                         
+           │<───────────────────────│                        │                                │                  │                 │                         
+     ┌─────┴─────┐          ┌───────┴───────┐          ┌─────┴─────┐                      ┌───┴────┐          ┌──┴──┐          ┌───┴────┐                    
+     │Application│          │WalletExtension│          │ObscuroNode│                      │Ethereum│          │ERC20│          │Guessing│                    
+     └───────────┘          └───────────────┘          └───────────┘                      │Node    │          └─────┘          │Game    │                    
+                                                                                          └────────┘                           └────────┘            
 ```
 @startuml
 !pragma teoz true
@@ -115,6 +235,162 @@ The problem with this mixed model, where two contracts interact and one is outsi
 based on a single world view, and all transactions need to be committed atomically. In the case of the Guessing Game, the guess() interaction and the 
 transfer() interaction must both happen or none happen. The only way this can happen is for the block producer to execute a transaction chain, which means 
 that the Obscuro node (which is not a block producer) would need to gather the world view of the Game and ERC20 states, process the transaction logic,
-rewrite the resulting transactions in such a way that a non-SGX block producer could understand, and then submit a single transaction into the network 
+rewrite the resulting transactions in such a way that a non-TEE block producer could understand, and then submit a single transaction into the network 
 mempool.
 
+# Moving World State Into TEE
+                                                                                                            ┌────────┐                           ┌────────┐                    
+     ┌───────────┐          ┌───────────────┐          ┌───────────┐                                        │Ethereum│          ┌─────┐          │Guessing│                    
+     │Application│          │WalletExtension│          │ObscuroNode│                                        │Node    │          │ERC20│          │Game    │                    
+     └─────┬─────┘          └───────┬───────┘          └─────┬─────┘                                        └───┬────┘          └──┬──┘          └───┬────┘                    
+           │                        │                  ╔═════╧══════════════════════════════════════════════════╧══════╗           │                 │                         
+           │                        │                  ║supports Ethereum JSON-RPC                                    ░║           │                 │                         
+           │                        │                  ╚═════╤══════════════════════════════════════════════════╤══════╝           │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │                 ╔═══════════════╗                │                  │                 │                         
+═══════════╪════════════════════════╪════════════════════════╪═════════════════╣ Token Approval╠════════════════╪══════════════════╪═════════════════╪═════════════════════════
+           │                        │                        │                 ╚═══════════════╝                │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │   ERC20.approve(GG)    │                        │                                                  │                  │                 │                         
+           │───────────────────────>│                        │                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │   encrypted            │                                                  │                  │                 │                         
+           │                        │   ERC20.approve(GG)    │                                                  │                  │                 │                         
+           │                        │───────────────────────>│                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │       Controller.getEncryptedStates(ERC20)       │                  │                 │                         
+           │                        │                        │──────────────────────────────────────────────────>                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │        ╔══════╤════════╪══════════════════════════════════════════════════╪══════════════════╪════════════╗    │                         
+           │                        │        ║ TEE  │        │                                                  │                  │            ║    │                         
+           │                        │        ╟──────┘        ────┐                                              │                  │            ║    │                         
+           │                        │        ║                   │ decrypt                                      │                  │            ║    │                         
+           │                        │        ║               <───┘                                              │                  │            ║    │                         
+           │                        │        ║               │                                                  │                  │            ║    │                         
+           │                        │        ║               │                             approve()            │                  │            ║    │                         
+           │                        │        ║               │────────────────────────────────────────────────────────────────────>│            ║    │                         
+           │                        │        ║               │                                                  │                  │            ║    │                         
+           │                        │        ║               ────┐                                              │                  │            ║    │                         
+           │                        │        ║                   │ encrypt                                      │                  │            ║    │                         
+           │                        │        ║               <───┘                                              │                  │            ║    │                         
+           │                        │        ╚═══════════════╪══════════════════════════════════════════════════╪══════════════════╪════════════╝    │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │       Controller.setEncryptedStates(ERC20)       │                  │                 │                         
+           │                        │                        │──────────────────────────────────────────────────>                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │   encrypted receipt    │                                                  │                  │                 │                         
+           │                        │<───────────────────────│                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │        receipt         │                        │                                                  │                  │                 │                         
+           │<───────────────────────│                        │                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │                    ╔═════════╗                   │                  │                 │                         
+═══════════╪════════════════════════╪════════════════════════╪════════════════════╣ Guessing╠═══════════════════╪══════════════════╪═════════════════╪═════════════════════════
+           │                        │                        │                    ╚═════════╝                   │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │ GuessingGame.guess()   │                        │                                                  │                  │                 │                         
+           │───────────────────────>│                        │                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │ encrypted              │                                                  │                  │                 │                         
+           │                        │ GuessingGame.guess()   │                                                  │                  │                 │                         
+           │                        │───────────────────────>│                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │            ERC20.getEncryptedState()             │                  │                 │                         
+           │                        │                        │──────────────────────────────────────────────────>                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │Controller.getEncryptedStates(GuessingGame, ERC20)│                  │                 │                         
+           │                        │                        │──────────────────────────────────────────────────>                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │        ╔══════╤════════╪══════════════════════════════════════════════════╪══════════════════╪═════════════════╪══════════════╗          
+           │                        │        ║ TEE  │        │                                                  │                  │                 │              ║          
+           │                        │        ╟──────┘        ────┐                                              │                  │                 │              ║          
+           │                        │        ║                   │ decrypt                                      │                  │                 │              ║          
+           │                        │        ║               <───┘                                              │                  │                 │              ║          
+           │                        │        ║               │                                                  │                  │                 │              ║          
+           │                        │        ║               │                                        guess()   │                  │                 │              ║          
+           │                        │        ║               │───────────────────────────────────────────────────────────────────────────────────────>              ║          
+           │                        │        ║               │                                                  │                  │                 │              ║          
+           │                        │        ║               │                                                  │                  │    transfer()   │              ║          
+           │                        │        ║               │                                                  │                  │ <────────────────              ║          
+           │                        │        ║               │                                                  │                  │                 │              ║          
+           │                        │        ║               ────┐                                              │                  │                 │              ║          
+           │                        │        ║                   │ encrypt                                      │                  │                 │              ║          
+           │                        │        ║               <───┘                                              │                  │                 │              ║          
+           │                        │        ╚═══════════════╪══════════════════════════════════════════════════╪══════════════════╪═════════════════╪══════════════╝          
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │                        │Controller.setEncryptedStates(GuessingGame, ERC20)│                  │                 │                         
+           │                        │                        │──────────────────────────────────────────────────>                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │                        │   encrypted receipt    │                                                  │                  │                 │                         
+           │                        │<───────────────────────│                                                  │                  │                 │                         
+           │                        │                        │                                                  │                  │                 │                         
+           │        receipt         │                        │                                                  │                  │                 │                         
+           │<───────────────────────│                        │                                                  │                  │                 │                         
+     ┌─────┴─────┐          ┌───────┴───────┐          ┌─────┴─────┐                                        ┌───┴────┐          ┌──┴──┐          ┌───┴────┐                    
+     │Application│          │WalletExtension│          │ObscuroNode│                                        │Ethereum│          │ERC20│          │Guessing│                    
+     └───────────┘          └───────────────┘          └───────────┘                                        │Node    │          └─────┘          │Game    │                    
+                                                                                                            └────────┘                           └────────┘                    
+```
+@startuml
+!pragma teoz true
+skinparam monochrome false
+skinparam roundcorner 15
+skinparam shadowing false
+skinparam sequence{
+  ArrowColor #EC1D24
+  ParticipantBackgroundColor White
+  ParticipantBorderColor White
+  NoteBackgroundColor White
+  NoteBorderColor Black
+  ActorBorderColor Black
+  ActorBackgroundColor White
+  LifeLineBorderColor Black
+}
+skinparam note{
+  BorderColor Black
+  BackgroundColor White
+}
+
+participant Application as A
+participant WalletExtension as W
+participant ObscuroNode as O
+participant "Ethereum\nNode" as E
+participant ERC20 as T
+participant "Guessing\nGame" as G
+
+note over O, E: supports Ethereum JSON-RPC
+
+==Token Approval==
+A -> W: ERC20.approve(GG)
+W -> O: encrypted\nERC20.approve(GG)
+O -> E: Controller.getEncryptedStates(ERC20)
+group TEE
+O -> O: decrypt
+O -> T: approve()
+O -> O: encrypt
+end
+O -> E: Controller.setEncryptedStates(ERC20)
+O -> W: encrypted receipt
+W -> A: receipt
+
+
+==Guessing==
+A -> W: GuessingGame.guess()
+W -> O: encrypted\nGuessingGame.guess()
+O -> E: ERC20.getEncryptedState()
+O -> E: Controller.getEncryptedStates(GuessingGame, ERC20)
+group TEE
+O -> O: decrypt
+O -> G: guess()
+G -> T: transfer()
+O -> O: encrypt
+end
+O -> E: Controller.setEncryptedStates(GuessingGame, ERC20)
+O -> W: encrypted receipt
+W -> A: receipt
+
+@enduml
+```
