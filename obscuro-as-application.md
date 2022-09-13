@@ -1,3 +1,6 @@
+# Editing Diagrams
+Diagrams may be edited using an online PlantUML editor, such as [https://plantuml.com/](https://plantuml.com/).
+
 # Basic Interaction
 
 ```
@@ -43,6 +46,8 @@ WE -> W: receipt
 ```
 
 # More Complex Example Of Guessing Game
+
+[Image of interaction](https://www.plantuml.com/plantuml/png/bPBDRjim48JlV8fjUac19cY2zcB0HHoN4504KP0Oq2KNLbhRX2Kkkrmb_K7UlQOjsMAh77eKlvaTpb9NGGnBszJgZMUpQWm8qYyGRb65ZNNUi6cW8KVbcgb1M9ew315JwwgIs273nQS126jJqRDrgtyi0R-tw4hyhG1cpFGyfveOtkhvnPVBZzl3EyDYI-kDasjJRbQxZBseM5l1loJ45NAARqamjQPiwBckjy9ubLA8NmUlJBknIxonRcJYow2o8zdL7Hi_Flb5AN_i23FlQriQiUJ019Wbi31rZQ9_2BhG2Of4a7yBPSjqInL6c2VmHCiQ6TlcqKN1ILJeHA7lvvSVul4YDMOjXc3Twj5bfjaRCwLYLw0dPCZVWvv0QBqdbW1z3dnzo6_Fxk_cIasd2zgWY_MOdamzdQePd7s6Oh8FFJSxWATPzauLaUGJG5VoJozOFReXpYFM8yRzZMfSIWV1XlWYnq5AH-zY0aENxk8OIxHUzlEBGVo1597CZihOgz_De55_59TrleeVfoEbe2TzdzI6edlbWnZ1qq6zL1jR7Xl6Fyp3GckLTuaLHjRroYQ7tApRXR1nOOcS9lIdO9qWbxWRdXrM5JovW2fFMobqrNYVCD8dVSZ1DVxZ1QwsYMrJ_m40)
 
 ```
 @startuml
